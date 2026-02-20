@@ -13,7 +13,22 @@ module tb;
     // Required waveform dump for hackathon GitHub Actions
     initial begin
         $dumpfile("sim_out/wave.vcd");
-        $dumpvars(0, tb);
+        // Explicitly dump only non-array signals to avoid vcd2wavedrom crash
+        // on array signal names like sph_cx[0] (it confuses [] with bit indexing)
+        $dumpvars(0, clk);
+        $dumpvars(0, rst_n);
+        $dumpvars(0, start);
+        $dumpvars(0, busy);
+        $dumpvars(0, frame_done);
+        $dumpvars(0, num_spheres_m1);
+        $dumpvars(0, cam_z);
+        $dumpvars(0, out_x);
+        $dumpvars(0, out_y);
+        $dumpvars(0, out_color);
+        $dumpvars(0, out_valid);
+        $dumpvars(0, total_pixels);
+        $dumpvars(0, total_hits);
+        $dumpvars(0, total_miss);
     end
 
     // Clock: 50 MHz
@@ -27,11 +42,13 @@ module tb;
     // DUT signals
     logic        start, busy, frame_done;
     logic [1:0]  num_spheres_m1;
+    /* verilator tracing_off */
     logic signed [15:0] sph_cx  [4];
     logic signed [15:0] sph_cy  [4];
     logic signed [15:0] sph_cz  [4];
     logic signed [15:0] sph_r2  [4];
     logic        [7:0]  sph_rgb [4];
+    /* verilator tracing_on */
     logic signed [15:0] cam_z;
     logic [9:0]  out_x;
     logic [8:0]  out_y;
