@@ -28,6 +28,7 @@
 //   At 50 MHz ≈ 6.1 ms/frame ≈ 163 FPS
 // ============================================================================
 
+/* verilator tracing_off */
 module ray_sphere_top #(
     parameter int SCREEN_W = 320,
     parameter int SCREEN_H = 240,
