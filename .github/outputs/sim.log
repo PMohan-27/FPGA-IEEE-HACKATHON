@@ -1,12 +1,35 @@
-Time	 a b | AND XOR
-----------------
-100	 0 0 | 00
-200	 0 1 | 01
-300	 1 0 | 01
-400	 1 1 | 10
-500	 0 0 | 00
-600	 0 1 | 01
-700	 1 0 | 01
-800	 1 1 | 10
-Testbench finished!
-- test/tb.sv:42: Verilog $finish
+
+=== TEST 1: Single centered sphere ===
+  Sphere: (0, 0, 5), r=3, RED
+  Camera: z=-10, focal=160
+  Pixels: 768/768  Hits: 225  Miss: 543
+  [PASS] Pixel count correct
+  [PASS] Sphere clearly visible (225 hit pixels)
+
+=== TEST 2: Two spheres (RED left, GREEN right) ===
+  Sphere 0: (-5, 0, 8), r=3, RED
+  Sphere 1: ( 5, 0, 8), r=3, GREEN
+  Pixels: 768  Hits: 270 (red=135 green=135)
+  [PASS] Pixel count correct
+  [PASS] Both spheres visible (red=135, green=135)
+
+=== TEST 3: Four spheres — full colorful scene ===
+  4 spheres: RED(-6,4,10) GREEN(6,4,10) BLUE(-6,-4,10) YELLOW(0,0,6)
+  Pixels: 768  Hits: 405
+  Colors: red=132 green=125 blue=93 yellow=55
+  [PASS] Pixel count correct
+  [PASS] All 4 spheres visible!
+
+===================================================
+ HARDWARE vs CPU PERFORMANCE ANALYSIS
+===================================================
+ Pipeline:    3 stages, 1 intersection/clock
+ Parallelism: 9 multipliers fire simultaneously
+ At 50 MHz:   50M intersections/sec
+
+ Frame (320x240, 4 spheres): 307,200 cycles
+   Hardware: 307,200 / 50MHz = 6.1 ms  (~163 FPS)
+   CPU@50MHz: ~30 cyc/test = 9.2M cyc = 184 ms (5 FPS)
+   Speedup:  ~30x faster than CPU
+===================================================
+- test/tb.sv:278: Verilog $finish
