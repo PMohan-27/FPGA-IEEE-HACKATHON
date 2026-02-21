@@ -92,22 +92,26 @@ module ray_sphere_top #(
 
     // =====================================================================
     // Ray direction for current pixel
-    //   Screen center = (160, 120). 
-    //   dir = (sx - 160, -(sy - 120), focal) — NOT shifted to Q10.6!
-    //   
+    //   Screen center = (SCREEN_W/2, SCREEN_H/2).
+    //   dir = (sx - cx, -(sy - cy), focal) — NOT shifted to Q10.6!
+    //
     //   The direction does NOT need Q10.6 encoding because it only appears
     //   in dot products with L (which IS Q10.6). The fp_mul handles the
     //   cross-format multiplication correctly since it just does (a*b)>>6.
-    //   
+    //
     //   Focal length controls FOV: larger = narrower FOV = bigger spheres.
-    //   At focal=160, a radius-3 sphere at distance 15 covers ~3357 pixels.
     // =====================================================================
+    localparam int CENTER_X = SCREEN_W / 2;
+    localparam int CENTER_Y = SCREEN_H / 2;
+    // Scale focal length proportionally to screen width for consistent FOV
+    localparam int FOCAL = SCREEN_W / 2;
+
     logic signed [15:0] dir_x, dir_y, dir_z;
     wire signed [15:0] sx_ext = {6'b0, sx};
     wire signed [15:0] sy_ext = {7'b0, sy};
-    assign dir_x = sx_ext - 16'sd160;
-    assign dir_y = -(sy_ext - 16'sd120);
-    assign dir_z = 16'sd160;  // focal length (integer, not Q10.6)
+    assign dir_x = sx_ext - 16'(CENTER_X);
+    assign dir_y = -(sy_ext - 16'(CENTER_Y));
+    assign dir_z = 16'(FOCAL);
 
     // =====================================================================
     // PIPELINE STAGE 1: L = O - C
